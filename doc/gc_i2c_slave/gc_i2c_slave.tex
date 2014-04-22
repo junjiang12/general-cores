@@ -4,7 +4,7 @@
 \documentclass[a4paper,11pt]{article}
 
 % Color package
-\usepackage[usenames,dvipsnames]{color}
+\usepackage[usenames,dvipsnames,table]{xcolor}
 
 % Hyperrefs
 \usepackage[
@@ -45,12 +45,14 @@
 
 \centerline
 {
+  \rowcolors{2}{white}{gray!25}
   \begin{tabular}{l c p{.6\textwidth}}
   \hline
   \multicolumn{1}{c}{\textbf{Date}} & \multicolumn{1}{c}{\textbf{Version}} & \multicolumn{1}{c}{\textbf{Change}} \\
   \hline
   26-06-2013 & 0.01 & First draft \\
   28-10-2013 & 0.02 & Changed PDF link colors \\
+  12-02-2014 & 0.03 & Updated block implementation \\
   \hline
   \end{tabular}
 }
@@ -162,6 +164,7 @@ To instantiate a tri-state buffer in VHDL:
   \label{tbl:ports}
   \centerline
   {
+    \rowcolors{2}{white}{gray!25}
     \begin{tabular}{l p{.8\textwidth}}
       \hline
       \multicolumn{1}{c}{\textbf{Name}} & \multicolumn{1}{c}{\textbf{Description}} \\
@@ -170,6 +173,7 @@ To instantiate a tri-state buffer in VHDL:
                      1 -- glitches narrower than 1 \textit{clk\_i} cycle are filtered \newline
                      2 -- glitches narrower than 2 \textit{clk\_i} cycles are filtered \newline
                      etc.\\
+      \hline
       clk\_i & Clock input \\
       rst\_n\_i & Active-low reset input \\
       scl\_i & SCL line input \\
@@ -372,10 +376,11 @@ Figure~\ref{fig:fsm-diag} shows a simplified state transition diagram of the FSM
 and Table~\ref{tbl:fsm} lists the states of the FSM and the operations performed in each
 state. Across the FSM, shifting of bits into the module is done on the rising edge
 of SCL and shifting out is done on the falling edge of SCL. A three-bit counter is
-used to count the number of received bits. This bit counter is incremented on the
-rising edge of SCL. During read and write cycles, the FSM also changes states on
-the SCL falling edge. A summary of the FSM actions with reference to the SCL line
-on read and write transfer is shown in Figure~\ref{fig:fsm-and-scl}.
+used to count the number of bits that are sent and received by the module. This bit
+counter is incremented on the rising edge of SCL. During read and write cycles, the
+FSM changes states on the SCL falling edge. A summary of the FSM actions with
+reference to the SCL line on read and write transfer is shown in
+Figure~\ref{fig:fsm-and-scl}.
 
 \begin{figure}[h]
   \centerline{\includegraphics[width=\textwidth]{fig/fsm-diag}}
@@ -389,6 +394,8 @@ on read and write transfer is shown in Figure~\ref{fig:fsm-and-scl}.
   \label{fig:fsm-and-scl}
 \end{figure}
 
+{
+\rowcolors{2}{white}{gray!25}
 \begin{longtable}{l p{.7\textwidth}}
   \caption{The states of the \textit{gc\_i2c\_slave} FSM}
   \label{tbl:fsm} \\
@@ -409,8 +416,6 @@ on read and write transfer is shown in Figure~\ref{fig:fsm-and-scl}.
     \textit{IDLE} & Default state after reset and the state returned to after
                     reception of a start and stop condition. \\
     \textit{ADDR} & Shift in the address and R/W bit. \\
-    \textit{ADDR\_CHECK} & Check the address versus \textit{i2c\_addr\_i} and set the \textit{op\_o}
-                           output as per the R/W bit. \\
     \textit{ADDR\_ACK} & Send ACK depending on value of \textit{ack\_i} and go to \textit{RD} state
                          if the R/W bit is high, or to \textit{WR\_LOAD\_TXSR} state if R/W bit is low.
                          If \textit{ack\_i} is low, go back to \textit{IDLE}. \\
@@ -425,6 +430,7 @@ on read and write transfer is shown in Figure~\ref{fig:fsm-and-scl}.
     \textit{WR\_ACK} & Read ACK bit sent by master. If '0', go back to \textit{WR} state, otherwise
                        go to \textit{IDLE} state. \\
 \end{longtable}
+}
 
 %------------------------------------------------------------------------------
 \subsection{Output control}
